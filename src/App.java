@@ -16,7 +16,8 @@ public class App {
 
         HttpClient client = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder(endereco).GET().build();
-        HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+        HttpResponse<String> response = client.send(request,
+                BodyHandlers.ofString());
 
         String body = response.body();
 
@@ -26,11 +27,14 @@ public class App {
 
         // Manipular os dados
         for (Map<String, String> filme : listaDeFilmes) {
-            System.out.println(filme.get("title"));
+            System.out.print("\u001b[1m" + filme.get("title") + " (" + filme.get("imDbRating") + ")" + " | ");
+            int nota = Integer.parseInt(filme.get("imDbRating").split("\\.")[0]);
+            for (int i = 0; i < nota; i++) {
+                System.out.print("\uD83D\uDD25");
+            }
+            System.out.println(" |");
             System.out.println(filme.get("image"));
-            System.out.println(filme.get("imDbRating"));
             System.out.println();
-
         }
 
     }
