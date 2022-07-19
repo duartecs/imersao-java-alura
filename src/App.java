@@ -1,5 +1,6 @@
-import java.io.PrintStream;
+import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -26,17 +27,19 @@ public class App {
         List<Map<String, String>> listaDeFilmes = parser.parse(body);
 
         // Manipular os dados
-        for (Map<String, String> filme : listaDeFilmes) {
-            System.out.print("\u001b[1m" + filme.get("title") + " (" + filme.get("imDbRating") + ")" + " | ");
-            int nota = Integer.parseInt(filme.get("imDbRating").split("\\.")[0]);
-            for (int i = 0; i < nota; i++) {
-                System.out.print("\uD83D\uDD25");
-            }
-            System.out.println(" |");
-            System.out.println(filme.get("image"));
-            System.out.println();
-        }
 
+        var gerador = new GeradorDeSticker();
+        for (Map<String, String> filme : listaDeFilmes) {
+            String urlImagem = filme.get("image");
+            String titulo = filme.get("title");
+
+            InputStream inputStream = new URL(urlImagem).openStream();
+            String nomeArquivo = titulo + ".png";
+
+            gerador.criar(inputStream, nomeArquivo);
+
+            System.out.println(titulo);
+        }
     }
 
 }
