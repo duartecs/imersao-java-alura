@@ -1,10 +1,5 @@
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
 import java.util.List;
 import java.util.Map;
 
@@ -12,33 +7,31 @@ public class App {
     public static void main(String[] args) throws Exception {
 
         // Acessar API
+
+        // IMDB
         String url = "https://api.mocki.io/v2/549a5d8b";
-        URI endereco = URI.create(url);
+        var extrator = new ExtratorDeConteudoDoIMDB();
 
-        HttpClient client = HttpClient.newBuilder().build();
-        HttpRequest request = HttpRequest.newBuilder(endereco).GET().build();
-        HttpResponse<String> response = client.send(request,
-                BodyHandlers.ofString());
+        // NASA
+        // String url = "https://api.mocki.io/v2/549a5d8b/NASA-APOD";
+        // var extrator = new ExtratorDeConteudoDaNasa();
 
-        String body = response.body();
+        var http = new ClienteHttp();
+        String json = http.buscaDados(url);
 
-        // Tratar os dados recebidos
-        var parser = new JsonParser();
-        List<Map<String, String>> listaDeFilmes = parser.parse(body);
-
-        // Manipular os dados
+        List<Conteudo> conteudos = extrator.extraiConteudos(json);
 
         var gerador = new GeradorDeSticker();
-        for (Map<String, String> filme : listaDeFilmes) {
-            String urlImagem = filme.get("image");
-            String titulo = filme.get("title");
+        for (int i = 0; i < 3; i++) {
 
-            InputStream inputStream = new URL(urlImagem).openStream();
-            String nomeArquivo = titulo + ".png";
+            Conteudo conteudo = conteudos.get(i);
+
+            InputStream inputStream = new URL(conteudo.getUrlImagem()).openStream();
+            String nomeArquivo = conteudo.getTitulo() + ".png";
 
             gerador.criar(inputStream, nomeArquivo);
 
-            System.out.println(titulo);
+            System.out.println(conteudo.getTitulo());
         }
     }
 

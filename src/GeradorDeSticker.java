@@ -29,7 +29,7 @@ public class GeradorDeSticker {
     var fonte = new Font(Font.SANS_SERIF, Font.BOLD, 64);
     graphics.setFont(fonte);
 
-    graphics.drawString("TESTE", 100, novaAltura - 100);
+    graphics.drawString("TESTE", largura / 2 - 64, novaAltura - 100);
 
     ImageIO.write(novaImagem, "png", new File("imagens/" + nomeArquivo));
   }
